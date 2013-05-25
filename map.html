@@ -92,6 +92,7 @@
 			}
 			
 			prg_banks[0].reserve(0x3D48, 0x4000, 'red', 'NPC names');
+			prg_banks[1].reserve(0x1CCB, 0x1CED, 'purple', 'Location names');
 			prg_banks[1].reserve(0x20, 0x1C00, 'red', 'NPC conversation');
 			prg_banks[2].reserve(0x1C0C, 0x1DBE, 'red', 'Shop names');
 			prg_banks[2].reserve(0x1F46, 0x21D2, 'red', 'Shop conversation');
@@ -101,7 +102,11 @@
 			prg_banks[3].reserve(0x3200, 0x3E00, 'red', 'Misc strings');
 			prg_banks[4].reserve(0x2822, 0x33C8, 'green', 'Walk zones'); // japanese: 0x282E 
 			prg_banks[5].reserve(0x20, 0x37D1, 'yellow', 'Data found in NSF, presumably music');
+			prg_banks[7].reserve(0x599, 0x602, 'pink', 'Location images');
+			prg_banks[7].reserve(0x10CC, 0x10EF, 'aqua', 'Location pacifist mode');
 			prg_banks[7].reserve(0x26F1, 0x2B9D, 'black', 'Colour palettes');
+			prg_banks[7].reserve(0x3057, 0x307A, 'purple', 'Location music tracks');
+			prg_banks[7].reserve(0x349A, 0x34BD, 'purple', 'Location reincarnation points');
 	
 		});
       

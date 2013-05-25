@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>River City Ransom ROM Map</title>
+	<meta charset="utf-8" />
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<style type='text/css'>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.bank {
+			width: 300px;
+		}
+		.sector {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			background: silver;
+			margin: 1px;
+		}
+		.inner-sector {
+			position: absolute;
+			width: 16px;
+			height: 16px;
+		}
+		.data {
+			position: absolute;
+			height: 1px;
+		}
+	</style>
+	<script type="text/javascript">
+	
+		function Bank(type, number) {
+			this.container = $('<div>').addClass('bank')[0];
+			$('<div>').text(type+' #'+number+':').appendTo(this.container);
+			this.sectors = [];
+			for (var offset = 0; offset < 0x4000; offset += 256) {
+				var sector = $('<div>').addClass('sector').appendTo(this.container)[0];
+				sector.inner = $('<div>').addClass('inner-sector').appendTo(sector);
+				this.sectors.push(sector);
+			}
+		}
+		Bank.prototype = {
+			reserve: function(start, stop, color, description) {
+				stop--;
+				var title = '[$'+start.toString(16).toUpperCase()+'-$'+stop.toString(16).toUpperCase()+'] '+description;
+				for (var sector_i = Math.floor(start / 256); sector_i < Math.ceil(stop / 256); sector_i++) {
+					var sector = this.sectors[sector_i].inner;
+					var local_start = Math.max(0x00, start - sector_i*256);
+					var local_stop = Math.min(0x100, stop - sector_i*256);
+					var first_line = Math.floor(local_start / 16);
+					var last_line = Math.floor(local_stop / 16);
+					for (var line_i = first_line; line_i <= last_line; line_i++) {
+						var left = (line_i == first_line) ? (local_start % 16) : 0;
+						var width = ((line_i == last_line) ? (local_stop % 16) : 16)-left;
+						var height = 1;
+						var original_line_i = line_i;
+						if (left === 0 && width === 16) {
+							while (line_i+1 < last_line || (line_i+1===last_line && local_stop%16 === 15)) {
+								line_i++;
+								height++;
+							}
+						}
+						$('<div>').addClass('data')
+						.css({
+							top:original_line_i+'px',
+							left:left+'px',
+							width:width+'px',
+							height:height+'px',
+							background:color})
+						.prop('title', title).appendTo(sector);
+					}
+				}
+				for (var line = Math.floor(start / 16); line < Math.ceil(stop / 16); line++) {
+				}
+			}
+		};
+	
+		$(function() {
+		
+			var prg_banks = [];
+			
+			for (var prg_i = 0; prg_i < 8; prg_i++) {
+				prg_banks[prg_i] = new Bank('PRG', prg_i);
+			}
+			
+			for (var prg_i = 0; prg_i < prg_banks.length; prg_i++) {
+				var prg = prg_banks[prg_i];
+				$(prg.container).appendTo('body');
+			}
+			
+			prg_banks[0].reserve(0x3D48, 0x4000, 'red', 'NPC names');
+			prg_banks[1].reserve(0x20, 0x1C00, 'red', 'NPC conversation');
+			prg_banks[2].reserve(0x1C0C, 0x1DBE, 'red', 'Shop names');
+			prg_banks[2].reserve(0x1F46, 0x21D2, 'red', 'Shop conversation');
+			prg_banks[2].reserve(0x2351, 0x23E1, 'red', 'Shop submenus');
+			prg_banks[2].reserve(0x24F9, 0x2FA3, 'orange', 'Shop items');
+			prg_banks[2].reserve(0x23F5, 0x24F9, 'blue', 'Shop inventory lists');
+			prg_banks[3].reserve(0x3200, 0x3E00, 'red', 'Misc strings');
+			prg_banks[5].reserve(0x20, 0x37D1, 'yellow', 'Data found in NSF, presumably music');
+	
+		});
+      
+	</script>
+</head>
+
+<body>
+</body>
+
+</html>

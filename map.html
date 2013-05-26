@@ -32,6 +32,8 @@
 	</style>
 	<script type="text/javascript">
 	
+		var SHOW_ROM_POS = false;
+	
 		function Bank(type, number) {
 			this.number = number;
 			this.container = $('<div>').addClass('bank')[0];
@@ -49,8 +51,13 @@
 			},
 			reserve: function(start, stop, color, description) {
 				//stop--;
-				
-				var title = '[$'+start.toString(16).toUpperCase()+'-$'+stop.toString(16).toUpperCase()+'] '+description;
+				var title;
+				if (SHOW_ROM_POS) {
+					title = '[$'+this.toROMPos(start).toString(16).toUpperCase()+'-$'+this.toROMPos(stop).toString(16).toUpperCase()+'] '+description;
+				}
+				else {
+					title = '[$'+start.toString(16).toUpperCase()+'-$'+stop.toString(16).toUpperCase()+'] '+description;
+				}
 				for (var sector_i = Math.floor(start / 256); sector_i < Math.ceil(stop / 256); sector_i++) {
 					var sector = this.sectors[sector_i].inner;
 					var local_start = Math.max(0x00, start - sector_i*256);
@@ -451,6 +458,7 @@
 			prg_banks[4].reserve(0x33D7, 0x3502, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x3502, 0x358C, 'orange', 'Location NPC data');
 			prg_banks[4].reserve(0x358C, 0x35E8, CODE_COLOUR, CODE_DESC);
+			prg_banks[4].reserve(0x35F1, 0x36A9, 'orange', 'Location Gang Probability Distribution');
 			prg_banks[4].reserve(0x36A9, 0x3707, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x3717, 0x3777, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x3797, 0x37D1, CODE_COLOUR, CODE_DESC);
@@ -1125,14 +1133,6 @@
 			prg_banks[4].reserve(0x2816, 0x2822, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[4].reserve(0x33C7, 0x33C8, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[4].reserve(0x33D4, 0x33D7, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x3601, 0x3603, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x361F, 0x3621, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x3625, 0x3627, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x3661, 0x3666, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x3681, 0x3684, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x3694, 0x3695, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x369E, 0x369F, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[4].reserve(0x36A8, 0x36A9, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[4].reserve(0x377C, 0x377D, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[4].reserve(0x378C, 0x378D, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[4].reserve(0x38F4, 0x38F9, UNUSED_COLOUR, UNUSED_DESC);

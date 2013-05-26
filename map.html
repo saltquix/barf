@@ -460,8 +460,10 @@
 			prg_banks[4].reserve(0x358C, 0x35E8, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x35F1, 0x36A9, 'orange', 'Location Gang Probability Distribution');
 			prg_banks[4].reserve(0x36A9, 0x3707, CODE_COLOUR, CODE_DESC);
+			prg_banks[4].reserve(0x3707, 0x3717, 'orange', 'Something to do with gang names/faces');
 			prg_banks[4].reserve(0x3717, 0x3777, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x3797, 0x37D1, CODE_COLOUR, CODE_DESC);
+			prg_banks[4].reserve(0x3717, 0x38F4, 'orange', 'Something to do with gang sprites');
 			prg_banks[4].reserve(0x37FD, 0x38F4, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x38F9, 0x3919, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x391D, 0x393C, CODE_COLOUR, CODE_DESC);
@@ -647,6 +649,9 @@
 			prg_banks[7].reserve(0x26F1, 0x2B9D, 'lavender', 'Colour palettes');
 			prg_banks[7].reserve(0x2B9D, 0x2BC8, CODE_COLOUR, CODE_DESC);
 			prg_banks[7].reserve(0x2BD7, 0x2C2A, CODE_COLOUR, CODE_DESC);
+			
+			prg_banks[7].reserve(0x2C2A, 0x2C58, 'green', 'Gang/NPC money');
+			
 			prg_banks[7].reserve(0x2C58, 0x2D22, CODE_COLOUR, CODE_DESC);
 			prg_banks[7].reserve(0x2D23, 0x2D99, CODE_COLOUR, CODE_DESC);
 			prg_banks[7].reserve(0x2DB5, 0x2E98, CODE_COLOUR, CODE_DESC);
@@ -1660,7 +1665,6 @@
 			prg_banks[7].reserve(0x249E, 0x25D2, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x26A9, 0x26B4, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x2BC8, 0x2BD7, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[7].reserve(0x2C56, 0x2C58, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x2D22, 0x2D23, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x2D99, 0x2DB5, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x2E98, 0x2EA3, UNUSED_COLOUR, UNUSED_DESC);

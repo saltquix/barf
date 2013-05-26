@@ -33,6 +33,7 @@
 	<script type="text/javascript">
 	
 		function Bank(type, number) {
+			this.number = number;
 			this.container = $('<div>').addClass('bank')[0];
 			$('<div>').text(type+' #'+number+':').appendTo(this.container);
 			this.sectors = [];
@@ -43,8 +44,12 @@
 			}
 		}
 		Bank.prototype = {
+			toROMPos: function(pos) {
+				return 0x10 + (this.number * 0x4000) + pos;
+			},
 			reserve: function(start, stop, color, description) {
 				//stop--;
+				
 				var title = '[$'+start.toString(16).toUpperCase()+'-$'+stop.toString(16).toUpperCase()+'] '+description;
 				for (var sector_i = Math.floor(start / 256); sector_i < Math.ceil(stop / 256); sector_i++) {
 					var sector = this.sectors[sector_i].inner;
@@ -241,7 +246,6 @@
 			prg_banks[1].reserve(0x25B0, 0x25B4, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x269A, 0x26A6, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x26E8, 0x2748, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[1].reserve(0x2A7E, 0x2A7F, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x2BCC, 0x2C39, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x2C64, 0x2C69, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x2CB9, 0x2CF0, UNUSED_COLOUR, UNUSED_DESC);
@@ -445,6 +449,7 @@
 			prg_banks[4].reserve(0x2822, 0x33C8, 'green', 'Walk zones'); // japanese: 0x282E 
 			prg_banks[4].reserve(0x33C8, 0x33D4, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x33D7, 0x3502, CODE_COLOUR, CODE_DESC);
+			prg_banks[4].reserve(0x3502, 0x358C, 'orange', 'Location NPC data');
 			prg_banks[4].reserve(0x358C, 0x35E8, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x36A9, 0x3707, CODE_COLOUR, CODE_DESC);
 			prg_banks[4].reserve(0x3717, 0x3777, CODE_COLOUR, CODE_DESC);
@@ -563,8 +568,7 @@
 			prg_banks[6].reserve(0x39C9, 0x3AA7, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x3AAF, 0x3ABD, CODE_COLOUR, CODE_DESC);
 			
-			prg_banks[7].reserve(0x0002, 0x0486, CODE_COLOUR, CODE_DESC);
-			prg_banks[7].reserve(0x0487, 0x0599, CODE_COLOUR, CODE_DESC);
+			prg_banks[7].reserve(0x0002, 0x0599, CODE_COLOUR, CODE_DESC);
 			prg_banks[7].reserve(0x0599, 0x602, 'hotpink', 'Location images');
 			prg_banks[7].reserve(0x0705, 0x0787, CODE_COLOUR, CODE_DESC);
 			prg_banks[7].reserve(0x078A, 0x0854, CODE_COLOUR, CODE_DESC);
@@ -761,77 +765,6 @@
 			prg_banks[2].reserve(0x20F1, 0x210C, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x224F, 0x2267, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x2282, 0x22B1, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x272E, 0x272F, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2742, 0x2743, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2757, 0x2758, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x276C, 0x276D, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x289F, 0x28A6, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x28B4, 0x28BB, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x28CA, 0x28D1, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2914, 0x291B, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2926, 0x292C, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x293A, 0x2942, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2950, 0x2958, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2966, 0x296F, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x29F8, 0x29FD, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2A8C, 0x2A94, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2AA2, 0x2AAB, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2AB9, 0x2AC1, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2ACF, 0x2AD7, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2B45, 0x2B46, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2B5B, 0x2B5C, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2B6F, 0x2B70, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2B84, 0x2B85, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2BA5, 0x2BA6, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2BDC, 0x2BDD, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2BF0, 0x2BF1, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C04, 0x2C05, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C1A, 0x2C1B, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C2A, 0x2C2B, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C3C, 0x2C3D, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C50, 0x2C51, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C65, 0x2C66, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C7B, 0x2C7C, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C8E, 0x2C8F, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2C9E, 0x2C9F, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2CB0, 0x2CB1, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2CDA, 0x2CDB, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2CEB, 0x2CEC, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2CF9, 0x2CFA, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D0C, 0x2D0D, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D1F, 0x2D20, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D30, 0x2D31, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D45, 0x2D46, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D5B, 0x2D5C, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D70, 0x2D71, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D85, 0x2D86, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2D96, 0x2D97, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2DAB, 0x2DAC, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2DBF, 0x2DC0, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2DD3, 0x2DD4, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2DE9, 0x2DEA, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2DFE, 0x2DFF, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E0D, 0x2E0E, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E1F, 0x2E20, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E2F, 0x2E30, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E44, 0x2E45, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E54, 0x2E55, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E65, 0x2E66, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E69, 0x2E6B, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E7A, 0x2E7B, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2E90, 0x2E91, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2EA3, 0x2EA4, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2EB8, 0x2EB9, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2ED0, 0x2ED1, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2EE3, 0x2EE4, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2EF8, 0x2EF9, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F0C, 0x2F0D, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F1E, 0x2F1F, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F33, 0x2F34, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F49, 0x2F4A, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F5F, 0x2F60, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F72, 0x2F73, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x2F82, 0x2F83, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x315A, 0x315C, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x316A, 0x316C, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x3170, 0x3172, UNUSED_COLOUR, UNUSED_DESC);
@@ -1653,7 +1586,6 @@
 			prg_banks[6].reserve(0x38FA, 0x3900, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[6].reserve(0x3E24, 0x3FFF, UNUSED_COLOUR, UNUSED_DESC);
 			
-			prg_banks[7].reserve(0x0486, 0x0487, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x065B, 0x065C, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x067E, 0x067F, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[7].reserve(0x06AF, 0x06B0, UNUSED_COLOUR, UNUSED_DESC);

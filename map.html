@@ -50,7 +50,6 @@
 				return 0x10 + (this.number * 0x4000) + pos;
 			},
 			reserve: function(start, stop, color, description) {
-				//stop--;
 				var title;
 				if (SHOW_ROM_POS) {
 					title = '[$'+this.toROMPos(start).toString(16).toUpperCase()+'-$'+this.toROMPos(stop).toString(16).toUpperCase()+'] '+description;
@@ -256,7 +255,8 @@
 			prg_banks[1].reserve(0x25B0, 0x25B4, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x269A, 0x26A6, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x26E8, 0x2748, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[1].reserve(0x2BCC, 0x2C39, UNUSED_COLOUR, UNUSED_DESC);
+			prg_banks[1].reserve(0x2748, 0x2BD0, 'pink', 'Location exit zones');
+			prg_banks[1].reserve(0x2BD0, 0x2C39, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x2C64, 0x2C69, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x2CB9, 0x2CF0, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[1].reserve(0x2D10, 0x2D3B, UNUSED_COLOUR, UNUSED_DESC);
@@ -773,14 +773,6 @@
 			prg_banks[2].reserve(0x1F3A, 0x1F3C, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x1F3E, 0x1F42, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x1F43, 0x1F46, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F56, 0x1F5A, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F5C, 0x1F5E, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F60, 0x1F62, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F66, 0x1F68, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F6A, 0x1F76, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F7E, 0x1F80, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x1F82, 0x1F84, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[2].reserve(0x20F1, 0x210C, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x224F, 0x2267, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x2282, 0x22B1, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[2].reserve(0x315A, 0x315C, UNUSED_COLOUR, UNUSED_DESC);

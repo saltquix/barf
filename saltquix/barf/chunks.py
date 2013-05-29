@@ -1,27 +1,92 @@
 import struct
 from pprint import pprint
 
+# RCR likes to store decimal numbers as hexadecimal sometimes (e.g. 0x36 means decimal 36)
+def dec_as_hex(h):
+  try:
+    return int('%x' % h, 10)
+  except:
+    return 0
+
 class DataChunk:
-  def __init__(self, bank_type, bank_number, start, end=None):
+  def __init__(self, bank_type, bank_number, start, end=None, index=None):
     self.bank_type = bank_type
     self.bank_number = bank_number
     self.start = start
     self.end = end
+    self.index = index
   def getBank(self, rom):
     return rom.getBank(self.bank_type, self.bank_number)
 
 class TerminatedString(DataChunk):
-  def __init__(self, bank_type, bank_number, start, terminator=0x05):
-    DataChunk.__init__(self, bank_type, bank_number, start)
+  def __init__(self, bank_type, bank_number, start, index=None, terminator=0x05):
+    DataChunk.__init__(self, bank_type, bank_number, start, index=index)
     self.terminator = terminator
   def read(self, rom):
     return rom.encoding.readterminated(self.getBank(rom), self.start, self.terminator)[0]
   def encode(self, rom, value):
     return rom.encoding.encode(value, self.terminator)
 
+class ShopItem(DataChunk):
+  def __init__(self, bank_type, bank_number, start, index=None, terminator=0x05):
+    DataChunk.__init__(self, bank_type, bank_number, start, index=index)
+    self.terminator = terminator
+  def read(self, rom):
+    bank = self.getBank(rom)
+    memview = memoryview(bank)
+    name, pos = rom.encoding.readterminated(bank, self.start, self.terminator)
+    if self.index != None and ((self.index < rom.firstRealShopItem) or (self.index > rom.lastRealShopItem)):
+      return (('name',name),)
+
+    cost = dec_as_hex(bank[pos]) + dec_as_hex(bank[pos+1]) * 100 + dec_as_hex(bank[pos+2]) * 10000
+    pos += 3
+
+    unknown, action1, action2 = struct.unpack('BBB', memview[pos:pos+3].tobytes())
+    pos += 3
+
+    statflags = struct.unpack('<H', memview[pos:pos+2].tobytes())[0]
+    pos += 2
+
+    stats = []
+    if statflags & 0x0002:
+      stats.append('SG+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x0008:
+      stats.append('DF+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x0010:
+      stats.append('TH+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x0020:
+      stats.append('WN+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x0040:
+      stats.append('K+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x0080:
+      stats.append('P+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x0001:
+      stats.append('WL+%d' % bank[pos])
+      pos += 1
+    if statflags & 0x8000:
+      stats.append('SM+%d' % bank[pos])
+      pos += 1
+
+    if len(stats) == 0:
+      stats = ()
+    else:
+      stats = (('stats', ' '.join(stats)),)
+
+    return (('name',name),('cost',cost),('unknown',unknown),('action1',action1),('action2',action2)) + stats
+  def encode(self, rom, value):
+    value = dict(value)
+    encoded = rom.encoding.encode(value['name'], self.terminator)
+    return encoded
+
 class PointerDataBlock(DataChunk):
-  def __init__(self, data_type, bank_type, bank_number, start, end, ptr_OR=0x8000, count=None, base='bank_start', ptr_bytes=2):
-    DataChunk.__init__(self, bank_type, bank_number, start, end)
+  def __init__(self, data_type, bank_type, bank_number, start, end, index=None, ptr_OR=0x8000, count=None, base='bank_start', ptr_bytes=2):
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index=index)
     self.DataType = data_type
     self.ptr_OR = ptr_OR
     self.base = base
@@ -51,13 +116,13 @@ class PointerDataBlock(DataChunk):
       else:
         ptr = (ptr & 0x3FFF) + base
         data_start = min(data_start, ptr)
-        chunk = self.DataType(bank_type = self.bank_type, bank_number = self.bank_number, start = ptr)
-        entry = chunk.read(rom)
+        entry = self.temp(start=ptr, index=(i - self.start) / self.ptr_bytes).read(rom)
         result.append(entry)
     return tuple(result)
+  def temp(self, start=0, index=None):
+    return self.DataType(bank_type = self.bank_type, bank_number=self.bank_number, start=start, index=index)
   def write(self, rom, values):
-    o = self.DataType(bank_type = self.bank_type, bank_number = self.bank_number, start=0)
-    encoded = [(b'' if value == None else o.encode(rom, value)) for value in values]
+    encoded = [(b'' if value == None else self.temp(index=i).encode(rom, value)) for i, value in enumerate(values)]
     ptrs = bytearray(len(values) * self.ptr_bytes)
     data = bytearray()
     entries = {}

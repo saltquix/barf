@@ -19,8 +19,11 @@ class RiverCityRansomRom(NesRom):
         'shop_dialog': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1EA2, end=0x21EE),
         'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x236C, end=0x23A7),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C85, end=0x1D04,
-          count=24, base='data_start', ptr_OR=0, ptr_bytes=1)
+          count=24, base='data_start', ptr_OR=0, ptr_bytes=1),
+        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24A9, end=0x2AAC)
       }
+      self.firstRealShopItem = 1
+      self.lastRealShopItem = 122
     else:
       self.encoding = english
       self.model = {
@@ -30,8 +33,11 @@ class RiverCityRansomRom(NesRom):
         'shop_dialog': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1F46, end=0x21D2),
         'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x2351, end=0x23E2),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C0C, end=0x1DBE,
-          count=24, base='data_start', ptr_OR=0)
+          count=24, base='data_start', ptr_OR=0),
+        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24F9, end=0x2FA3)
       }
+      self.firstRealShopItem = 1
+      self.lastRealShopItem = 124
 
   @property
   def npcNames(self):

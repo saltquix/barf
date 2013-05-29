@@ -20,7 +20,11 @@ class RiverCityRansomRom(NesRom):
         'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x236C, end=0x23A7),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C85, end=0x1D04,
           count=24, base='data_start', ptr_OR=0, ptr_bytes=1),
-        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24A9, end=0x2AAC)
+        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24A9, end=0x2AAC),
+        'location_name_codes': chunks.Bytes(bank_type='prg', bank_number=1, start=0x156B, end=0x158E),
+        'reincarnation_locations': chunks.Bytes(bank_type='prg', bank_number=7, start=0x349A, end=0x34BD),
+        'location_music_tracks': chunks.Bytes(bank_type='prg', bank_number=7, start=0x3094, end=0x30B7),
+        'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF)
       }
       self.firstRealShopItem = 1
       self.lastRealShopItem = 122
@@ -34,7 +38,11 @@ class RiverCityRansomRom(NesRom):
         'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x2351, end=0x23E2),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C0C, end=0x1DBE,
           count=24, base='data_start', ptr_OR=0),
-        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24F9, end=0x2FA3)
+        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24F9, end=0x2FA3),
+        'location_name_codes': chunks.Bytes(bank_type='prg', bank_number=1, start=0x1CBB, end=0x1CDE),
+        'reincarnation_locations': chunks.Bytes(bank_type='prg', bank_number=7, start=0x349A, end=0x34BD),
+        'location_music_tracks': chunks.Bytes(bank_type='prg', bank_number=7, start=0x3057, end=0x307A),
+        'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF)
       }
       self.firstRealShopItem = 1
       self.lastRealShopItem = 124

@@ -18,6 +18,14 @@ class DataChunk:
   def getBank(self, rom):
     return rom.getBank(self.bank_type, self.bank_number)
 
+class Bytes(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index=index)
+  def read(self, rom):
+    return tuple(self.getBank(rom)[self.start:self.end])
+  def write(self, rom, values):
+    self.getBank(rom)[self.start:self.end] = values
+
 class TerminatedString(DataChunk):
   def __init__(self, bank_type, bank_number, start, index=None, terminator=0x05):
     DataChunk.__init__(self, bank_type, bank_number, start, index=index)

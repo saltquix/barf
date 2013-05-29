@@ -34,7 +34,7 @@ def run():
     if cfg.has_option('Paths', 'ROMs'):
       rom_folder = cfg.get('Paths', 'ROMs')
     else:
-      rom_folder = None
+      rom_folder = os.path.split(__file__)[0]
     rom_path = tkFileDialog.askopenfilename(
       title = 'Please choose a River City Ransom ROM image file',
       filetypes = [('NES ROMs', '*.nes'), ('All files', '*.*')],

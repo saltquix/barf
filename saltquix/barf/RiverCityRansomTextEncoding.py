@@ -6,6 +6,12 @@ class RiverCityRansomTextEncoding(object):
 
   def __init__(self):
     self.decodeMapping = [None for x in range(256)]
+    self.currencySymbol = ''
+    self.currencyDecimalPlaces = 0
+
+  def formatCurrency(self, v):
+    fmt = '%%s%%0.%df' % self.currencyDecimalPlaces
+    return fmt % (self.currencySymbol, float(v) / 10**self.currencyDecimalPlaces)
 
   def load(self, path):
     f = codecs.open(path, 'r', 'utf-8')
@@ -17,6 +23,17 @@ class RiverCityRansomTextEncoding(object):
           continue
         parts = re.match('^\s*(?:(\d+)|(0x[a-fA-F0-9]+))\s*:\s*(\S.*?)\s*$', line)
         if not parts:
+          parts = re.match(r'^\s*CURRENCY_SYMBOL\s*:\s*(?:<([^>]+)>|(\S.*?))\s*$', line)
+          if parts:
+            if parts.group(1):
+              self.currencySymbol = unicodedata.lookup(parts.group(1))
+            else:
+              self.currencySymbol = parts.group(2)
+            continue
+          parts = re.match(r'^\s*CURRENCY_DECIMAL_PLACES\s*:\s*(\d+)\s*$', line)
+          if parts:
+            self.currencyDecimalPlaces = int(parts.group(1))
+            continue
           raise Exception("invalid content in character mapping file")
         code, hex_code, mappings = parts.groups()
         if code:

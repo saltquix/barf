@@ -95,3 +95,6 @@
 # object name
 0x02: |
 0x03: [
+
+CURRENCY_SYMBOL: $
+CURRENCY_DECIMAL_PLACES: 2

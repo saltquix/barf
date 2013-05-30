@@ -25,6 +25,53 @@ class Bytes(DataChunk):
   def write(self, rom, values):
     self.getBank(rom)[self.start:self.end] = values
 
+class DecAsHexCouplets(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None):
+    if (end-start)%2 != 0:
+      raise Exception("length of block must be divisible by 2")
+    self.count = (end-start)/2
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index=index)
+  def read(self, rom):
+    bank = self.getBank(rom)
+    values = []
+    for pos in range(self.start, self.end, 2):
+      values.append(hex2dec(bank[pos]) + hex2dec(bank[pos+1])*100)
+    return tuple(values)
+  def write(self, rom, values):
+    if len(values) != self.count:
+      raise Exception("expected %d values, got %d" % (self.count, len(values)))
+    bank = self.getBank(rom)
+    for i,v in enumerate(values):
+      if v > 9999:
+        raise Exception("maximum value 9999 exceeded")
+      pos = self.start + i*2
+      bank[pos] = dec2hex(v % 100)
+      bank[pos+1] = dec2hex((v / 100) % 100)
+
+class DecAsHexTriplets(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None):
+    if (end-start)%3 != 0:
+      raise Exception("length of block must be divisible by 3")
+    self.count = (end-start)/3
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index=index)
+  def read(self, rom):
+    bank = self.getBank(rom)
+    values = []
+    for pos in range(self.start, self.end, 3):
+      values.append(hex2dec(bank[pos]) + hex2dec(bank[pos+1])*100 + hex2dec(bank[pos+2])*10000)
+    return tuple(values)
+  def write(self, rom, values):
+    if len(values) != self.count:
+      raise Exception("expected %d values, got %d" % (self.count, len(values)))
+    bank = self.getBank(rom)
+    for i,v in enumerate(values):
+      if v > 999999:
+        raise Exception("maximum value 999999 exceeded")
+      pos = self.start + i*3
+      bank[pos] = dec2hex(v % 100)
+      bank[pos+1] = dec2hex((v / 100) % 100)
+      bank[pos+2] = dec2hex((v / 10000) % 100)
+
 class TerminatedDecAsHex(DataChunk):
   def __init__(self, bank_type, bank_number, start, terminator=99, index=None):
     DataChunk.__init__(self, bank_type, bank_number, start, index=index)

@@ -62,8 +62,9 @@ class NesRom(object):
     new_path = path+'._new_.nes'
     if os.path.exists(new_path):
       i = 2
-      while os.path.exists(path+'._new'+i+'_.nes'):
+      while os.path.exists('%s._new%d_.nes' % (path, i)):
         i += 1
+      new_path = '%s._new%d_.nes' % (path, i)
     with open(new_path, 'wb') as f:
       f.write('NES\x1A')
       f.write(struct.pack('BB', len(self.prg_banks), len(self.chr_banks)))
@@ -86,8 +87,9 @@ class NesRom(object):
     old_path = path+'._old_.nes'
     if os.path.exists(old_path):
       i = 2
-      while os.path.exists(path+'._old'+i+'_.nes'):
+      while os.path.exists('%s._old%d_.nes' % (path, i)):
         i += 1
+      old_path = '%s._old%d_.nes' % (path, i)
     os.rename(path, old_path)
     os.rename(new_path, path)
     try:

@@ -104,6 +104,7 @@ def run():
         reincarnation = rom.model['reincarnation_locations'].read(rom)
         music_tracks = rom.model['location_music_tracks'].read(rom)
         pacifist_mode = rom.model['location_pacifist_mode'].read(rom)
+        gang_probability = rom.model['location_gang_probability'].read(rom)
         for i in range(len(name_codes)):
           f.write('%d.%s' % (i, os.linesep))
           if i < len(name_codes):
@@ -117,6 +118,10 @@ def run():
             f.write(' music_track: %d%s' % (music_tracks[i], os.linesep))
           if i < len(pacifist_mode):
             f.write(' pacifist_mode: %s%s' % ('off' if pacifist_mode[i] == 0 else 'on', os.linesep))
+          gp = () if (i >= len(gang_probability) or gang_probability[i] == None) else gang_probability[i]
+          gp += tuple(0 for i in range(9 - len(gp)))
+          gp = gp[:9]
+          f.write(' gang_probability: %s%s' % (' '.join('%d%%'%v for v in gp), os.linesep))
           f.write(os.linesep)
       message = 'Finished data export to ' + output_folder
       if gfx_mode:
@@ -129,6 +134,8 @@ def run():
       pacifist_mode = [0 for i in range(35)]
       reincarnation = [0 for i in range(35)]
       music_tracks = [0 for i in range(35)]
+      no_probability = tuple(0 for i in range(9))
+      gang_probability = [None for i in range(35)]
       with codecs.open(os.path.join(output_folder, 'places.txt'), 'r', 'utf-8') as f:
         if f.read(1) != u'\uFEFF':
           f.seek(0)
@@ -157,12 +164,30 @@ def run():
             music_tracks[current_id] = parse_num(key, value, True)
           elif key == 'pacifist_mode':
             pacifist_mode[current_id] = parse_onoff(key, value)
+          elif key == 'gang_probability':
+            gp = [0 for i in range(9)]
+            for i, prob in enumerate(int(m.group(1)) for m in re.finditer('(\d+)%', value)):
+              if i >= len(gp):
+                raise Exception("gang_probability for location #%d: too many values" % current_id)
+              if prob > 98:
+                raise Exception("gang_probability for location #%d gang #%d: maximum value is 98%" % (current_id, i))
+              gp[i] = prob
+            gp = tuple(gp)
+            while len(gp)>0 and gp[-1] == 0:
+              gp = gp[:-1]
+            if sum(gp) > 100:
+              raise Exception("gang_probability for location #%d: total exceeds 100%%" % current_id)
+            if len(gp) == 0:
+              gp = None
+            gang_probability[current_id] = gp
           else:
             raise Exception('unrecognised value: %s' % key)
       rom.model['location_name_codes'].write(rom, name_codes)
       rom.model['location_pacifist_mode'].write(rom, pacifist_mode)
       rom.model['reincarnation_locations'].write(rom, reincarnation)
       rom.model['location_music_tracks'].write(rom, music_tracks)
+      error_context = 'packing gang probability data'
+      rom.model['location_gang_probability'].write(rom, gang_probability)
       rom.save(rom_path)
       message = 'Finished data import from ' + output_folder + '\ninto ' + rom_path
       if gfx_mode:
@@ -175,6 +200,7 @@ def run():
       import tkMessageBox
       tkMessageBox.showerror('Error %s' % (error_context or ''), 'Oops! An error occurred %s:\n\n%s' % (error_context or '', unicode(e)))
     raise
+    
 
 if __name__ == '__main__':
   run()

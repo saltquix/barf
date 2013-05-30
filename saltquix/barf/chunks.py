@@ -2,11 +2,10 @@ import struct
 from pprint import pprint
 
 # RCR likes to store decimal numbers as hexadecimal sometimes (e.g. 0x36 means decimal 36)
-def dec_as_hex(h):
-  try:
-    return int('%x' % h, 10)
-  except:
-    return 0
+def hex2dec(h):
+  return int('%x' % h, 10)
+def dec2hex(d):
+  return int('%d' % d, 16)
 
 class DataChunk:
   def __init__(self, bank_type, bank_number, start, end=None, index=None):
@@ -25,6 +24,21 @@ class Bytes(DataChunk):
     return tuple(self.getBank(rom)[self.start:self.end])
   def write(self, rom, values):
     self.getBank(rom)[self.start:self.end] = values
+
+class TerminatedDecAsHex(DataChunk):
+  def __init__(self, bank_type, bank_number, start, terminator=99, index=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, index=index)
+    self.terminator = dec2hex(terminator)
+  def read(self, rom):
+    values = []
+    bank = self.getBank(rom)
+    pos = self.start
+    while bank[pos] != self.terminator:
+      values.append(hex2dec(bank[pos]))
+      pos += 1
+    return tuple(values)
+  def encode(self, rom, values):
+    return bytearray( tuple(dec2hex(v) for v in values) + (self.terminator,) )
 
 class TerminatedString(DataChunk):
   def __init__(self, bank_type, bank_number, start, index=None, terminator=0x05):
@@ -46,7 +60,7 @@ class ShopItem(DataChunk):
     if self.index != None and ((self.index < rom.firstRealShopItem) or (self.index > rom.lastRealShopItem)):
       return (('name',name),)
 
-    cost = dec_as_hex(bank[pos]) + dec_as_hex(bank[pos+1]) * 100 + dec_as_hex(bank[pos+2]) * 10000
+    cost = hex2dec(bank[pos]) + hex2dec(bank[pos+1]) * 100 + hex2dec(bank[pos+2]) * 10000
     pos += 3
 
     unknown, action1, action2 = struct.unpack('BBB', memview[pos:pos+3].tobytes())
@@ -130,6 +144,9 @@ class PointerDataBlock(DataChunk):
   def temp(self, start=0, index=None):
     return self.DataType(bank_type = self.bank_type, bank_number=self.bank_number, start=start, index=index)
   def write(self, rom, values):
+    values = tuple(values)
+    while len(values)>0 and values[-1] == None:
+      values = values[:-1]
     encoded = [(b'' if value == None else self.temp(index=i).encode(rom, value)) for i, value in enumerate(values)]
     ptrs = bytearray(len(values) * self.ptr_bytes)
     data = bytearray()

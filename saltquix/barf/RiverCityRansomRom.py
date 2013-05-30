@@ -24,7 +24,8 @@ class RiverCityRansomRom(NesRom):
         'location_name_codes': chunks.Bytes(bank_type='prg', bank_number=1, start=0x156B, end=0x158E),
         'reincarnation_locations': chunks.Bytes(bank_type='prg', bank_number=7, start=0x349A, end=0x34BD),
         'location_music_tracks': chunks.Bytes(bank_type='prg', bank_number=7, start=0x3094, end=0x30B7),
-        'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF)
+        'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF),
+        'location_gang_probability': chunks.PointerDataBlock(chunks.TerminatedDecAsHex, bank_type='prg', bank_number=4, start=0x35F1, end=0x36A9)
       }
       self.firstRealShopItem = 1
       self.lastRealShopItem = 122
@@ -42,7 +43,8 @@ class RiverCityRansomRom(NesRom):
         'location_name_codes': chunks.Bytes(bank_type='prg', bank_number=1, start=0x1CBB, end=0x1CDE),
         'reincarnation_locations': chunks.Bytes(bank_type='prg', bank_number=7, start=0x349A, end=0x34BD),
         'location_music_tracks': chunks.Bytes(bank_type='prg', bank_number=7, start=0x3057, end=0x307A),
-        'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF)
+        'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF),
+        'location_gang_probability': chunks.PointerDataBlock(chunks.TerminatedDecAsHex, bank_type='prg', bank_number=4, start=0x35F1, end=0x36A9)
       }
       self.firstRealShopItem = 1
       self.lastRealShopItem = 124

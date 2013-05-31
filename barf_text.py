@@ -13,9 +13,9 @@ def writeLines(path, lines):
   try:
     for i, el in enumerate(lines):
       if el == None:
-        f.write(u'# (%d unused)%s' % (i, os.linesep))
+        f.write(u'# (%d:--unused--)%s' % (i, os.linesep))
       else:
-        f.write(u'%d. %s%s' % (i, el, os.linesep))
+        f.write(u'%d:%s%s' % (i, el, os.linesep))
   finally:
     f.close()
 
@@ -120,7 +120,7 @@ def run():
             for l in f:
               if re.match('^\s*(#.*)?$', l):
                 continue
-              match = re.match(r'^\s*(\d+)\s*\. ?(.*?)[\r\n]*$', l)
+              match = re.match(r'^\s*(\d+)\s*[\.:] ?(.*?)[\r\n]*$', l)
               if not match:
                 raise Exception('invalid content in file: ' + l)
               index = int(match.group(1))

@@ -41,7 +41,7 @@ class RiverCityRansomTextEncoding(object):
         else:
           code = int(hex_code, 16)
         first = True
-        for mapping in re.finditer('<([^>]+)>|(\S)', mappings):
+        for mapping in re.finditer('<([^>]+)>|(\S+)', mappings):
           if mapping.group(1):
             mapping = unicodedata.lookup(mapping.group(1))
           else:

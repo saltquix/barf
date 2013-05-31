@@ -373,7 +373,8 @@
 			prg_banks[2].reserve(0x21D3, 0x224F, CODE_COLOUR, CODE_DESC);
 			prg_banks[2].reserve(0x2267, 0x2282, CODE_COLOUR, CODE_DESC);
 			prg_banks[2].reserve(0x22B1, 0x22BD, CODE_COLOUR, CODE_DESC);
-			prg_banks[2].reserve(0x2351, 0x23E2, 'red', 'Shop submenus');
+			prg_banks[2].reserve(0x2351, 0x23E2, 'red', 'Shop submenus - strings');
+			prg_banks[2].reserve(0x23E3, 0x23F5, 'green', 'Shop submenus - inventory list numbers');
 			prg_banks[2].reserve(0x23F5, 0x24F9, 'blue', 'Shop inventory lists');
 			prg_banks[2].reserve(0x24F9, 0x2FA3, 'orange', 'Shop items');
 			prg_banks[2].reserve(0x2FA3, 0x301F, CODE_COLOUR, CODE_DESC);
@@ -506,6 +507,48 @@
 			prg_banks[6].reserve(0x0713, 0x088E, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x0890, 0x08C6, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x08C8, 0x0999, CODE_COLOUR, CODE_DESC);
+			// $999 something to do with gang behaviour
+			// setting the first block (up to 99) to all this
+			// they are as if spellbound. making an aggressive move seems
+			//  free them, but only for a moment until it is complete
+			//   00: stand near player and jiggle back and forth (maybe being close enough to the player triggers another behaviour)
+			//   01: same as 00?
+			//   02: same as 00?
+			//   03: back away!!
+			//   04: THROW SOMETHING! if you aren't carrying anything, get towards the nearest thing, or glide around spookily
+			//   05: like 00, with more spooky gliding?
+			//   06: back off... maybe more slowly, hesitantly?
+			//   07: similar to 6?
+			//   08: mad attacking!
+			//   09: similiar to 08
+			//   0A: turn heel and flee, saying "not fair", disappearing off screen
+			//   0B: just stand there, repeating the same dumb-ass catchphrase
+			//   0C: stand still
+			//   0D: stand still. if already walking, keep going in that direction, but facing the player
+			//   0E: grab something heavy to throw; light objects appear to be heavy for a second anyway. if nothing to hold, make "throwing" gestures/noises anyway, and say a catchphrase for good measure
+			//   0F: similar to 0C
+			//   10: similar to 0C
+			//   11: same
+			//   12: same
+			//   13: similar to 0C
+			//   14: scamper left/right towards the player, never moving up/down
+			//   15: similar to 0D
+			//   16: !!!WALK BACK AND FORTH LIKE KIDS IN THE SHOPPING AREA!!!
+			//   17: say NPC speech line over and over ("Hold it! Rocko says...")
+			//   18: say NPC speech
+			//   19: black screen, music goes crazy
+			//   1A: same
+			//   1B: same
+			//   1C: same
+			//   1D: 0D
+			//   1E: crash
+			//   1F: same
+			//   20: same
+			//   30: crash
+			//   80: see 00
+			//   95: see 15
+			
+
 			prg_banks[6].reserve(0x11AF, 0x1200, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x1201, 0x1204, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x1208, 0x1271, CODE_COLOUR, CODE_DESC);
@@ -545,6 +588,7 @@
 			prg_banks[6].reserve(0x2594, 0x2630, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x263C, 0x271C, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x272E, 0x2741, CODE_COLOUR, CODE_DESC);
+			// something to do with character animations
 			prg_banks[6].reserve(0x2749, 0x279B, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x283B, 0x2877, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x287A, 0x28E1, CODE_COLOUR, CODE_DESC);
@@ -560,9 +604,11 @@
 			prg_banks[6].reserve(0x2E32, 0x2E39, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x2E3B, 0x2E49, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x2E59, 0x2E85, CODE_COLOUR, CODE_DESC);
+			// 0x2E58->0x2F07: something to do with being knocked in the air, setting to all-zero throws you/enemies off the top of the screen
 			prg_banks[6].reserve(0x2F07, 0x2FD3, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x2FDA, 0x301A, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x303E, 0x3058, CODE_COLOUR, CODE_DESC);
+			prg_banks[6].reserve(0x3058, 0x3060, 'purple', 'Sprites of objects at rest');
 			prg_banks[6].reserve(0x3060, 0x30AB, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x30AD, 0x30C1, CODE_COLOUR, CODE_DESC);
 			prg_banks[6].reserve(0x30D8, 0x31E1, CODE_COLOUR, CODE_DESC);
@@ -1233,12 +1279,13 @@
 			prg_banks[6].reserve(0x09C7, 0x09CB, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[6].reserve(0x09CE, 0x09D0, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[6].reserve(0x09D1, 0x09D5, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[6].reserve(0x09ED, 0x09F0, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[6].reserve(0x09F3, 0x09F9, UNUSED_COLOUR, UNUSED_DESC);
+			prg_banks[6].reserve(0x09ED, 0x09F0, UNUSED_COLOUR, UNUSED_DESC);			
+			prg_banks[6].reserve(0x09F3, 0x09F9, UNUSED_COLOUR, UNUSED_DESC);			
 			prg_banks[6].reserve(0x09FD, 0x0A01, UNUSED_COLOUR, UNUSED_DESC);
-			prg_banks[6].reserve(0x0A03, 0x0A07, UNUSED_COLOUR, UNUSED_DESC);
+			prg_banks[6].reserve(0x0A03, 0x0A07, UNUSED_COLOUR, UNUSED_DESC);			
 			prg_banks[6].reserve(0x0A0C, 0x0A0D, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[6].reserve(0x0A0F, 0x0A15, UNUSED_COLOUR, UNUSED_DESC);
+			
 			prg_banks[6].reserve(0x0A19, 0x0A21, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[6].reserve(0x0A25, 0x0A29, UNUSED_COLOUR, UNUSED_DESC);
 			prg_banks[6].reserve(0x0A2F, 0x0A3D, UNUSED_COLOUR, UNUSED_DESC);

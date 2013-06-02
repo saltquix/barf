@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import struct, os
+import struct, os, hashlib
 
 class NesRom(object):
 
@@ -20,6 +20,21 @@ class NesRom(object):
       if value.find('\0') != -1:
         raise StandardError('title cannot contain embedded null characters')
     self.title_ = value
+
+  def update_hash(self, hash):
+    hash.update('NES\x1A')
+    hash.update(bytearray( ( \
+      len(self.prg_banks), len(self.chr_banks), \
+      self.flags6, self.flags7, self.prg_ram_size, self.flags9, self.flags10, \
+      0, 0, 0, 0, 0) ))
+    for bank in self.prg_banks:
+      hash.update(bank)
+    for bank in self.chr_banks:
+      hash.update(bank)
+    return hash
+
+  def md5(self):
+    return self.update_hash(hashlib.new('md5')).hexdigest()
 
   def load(self, path):
     with open(path, 'rb') as f:

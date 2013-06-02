@@ -25,6 +25,21 @@ class Bytes(DataChunk):
   def write(self, rom, values):
     self.getBank(rom)[self.start:self.end] = values
 
+class TerminatedBytes(DataChunk):
+  def __init__(self, bank_type, bank_number, start, terminator=0xFF, index=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, index=index)
+    self.terminator = terminator
+  def read(self, rom):
+    bank = self.getBank(rom)
+    values = []
+    pos = self.start
+    while bank[pos] != self.terminator:
+      values.append(bank[pos])
+      pos += 1
+    return tuple(values)
+  def encode(self, rom, values):
+    return bytestring(values) + bytestring(self.terminator)
+
 class DecAsHexCouplets(DataChunk):
   def __init__(self, bank_type, bank_number, start, end, index=None):
     if (end-start)%2 != 0:
@@ -104,10 +119,11 @@ class ShopItem(DataChunk):
     bank = self.getBank(rom)
     memview = memoryview(bank)
     name, pos = rom.encoding.readterminated(bank, self.start, self.terminator)
-    if self.index != None and ((self.index < rom.firstRealShopItem) or (self.index > rom.lastRealShopItem)):
-      return (('name',name),)
 
-    cost = hex2dec(bank[pos]) + hex2dec(bank[pos+1]) * 100 + hex2dec(bank[pos+2]) * 10000
+    try:
+      cost = hex2dec(bank[pos]) + hex2dec(bank[pos+1]) * 100 + hex2dec(bank[pos+2]) * 10000
+    except:
+      cost = None
     pos += 3
 
     unknown, action1, action2 = struct.unpack('BBB', memview[pos:pos+3].tobytes())
@@ -117,28 +133,28 @@ class ShopItem(DataChunk):
     pos += 2
 
     stats = []
-    if statflags & 0x0002:
+    if statflags & 0x0002 and bank[pos] != 0:
       stats.append('SG+%d' % bank[pos])
       pos += 1
-    if statflags & 0x0008:
+    if statflags & 0x0008 and bank[pos] != 0:
       stats.append('DF+%d' % bank[pos])
       pos += 1
-    if statflags & 0x0010:
+    if statflags & 0x0010 and bank[pos] != 0:
       stats.append('TH+%d' % bank[pos])
       pos += 1
-    if statflags & 0x0020:
+    if statflags & 0x0020 and bank[pos] != 0:
       stats.append('WN+%d' % bank[pos])
       pos += 1
-    if statflags & 0x0040:
+    if statflags & 0x0040 and bank[pos] != 0:
       stats.append('K+%d' % bank[pos])
       pos += 1
-    if statflags & 0x0080:
+    if statflags & 0x0080 and bank[pos] != 0:
       stats.append('P+%d' % bank[pos])
       pos += 1
-    if statflags & 0x0001:
+    if statflags & 0x0001 and bank[pos] != 0:
       stats.append('WL+%d' % bank[pos])
       pos += 1
-    if statflags & 0x8000:
+    if statflags & 0x8000 and bank[pos] != 0:
       stats.append('SM+%d' % bank[pos])
       pos += 1
 
@@ -147,7 +163,17 @@ class ShopItem(DataChunk):
     else:
       stats = (('stats', ' '.join(stats)),)
 
-    return (('name',name),('cost',cost),('unknown',unknown),('action1',action1),('action2',action2)) + stats
+    if cost == None:
+      cost = ()
+    else:
+      cost = (('cost', cost),)
+
+    if action2 == 255:
+      action2 = ()
+    else:
+      action2 = (('action2',action2),)
+
+    return (('name',name),('unknown',unknown),('action1',action1)) + action2 + stats + cost
   def encode(self, rom, value):
     value = dict(value)
     encoded = rom.encoding.encode(value['name'], self.terminator)
@@ -234,3 +260,19 @@ class PointerDataBlock(DataChunk):
     if overflow > 0:
       raise Exception("Data won't fit into available space! Need to free up at least %d byte%s." % (overflow, 's' if overflow != 1 else ''))
     self.getBank(rom)[self.start:self.start + data_size] = ptrs + data
+
+class EntrancePointCollection(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None, ptr_OR=0x8000, count=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index)
+  def read(self, rom):
+    bank = self.getBank(rom)
+    memview = memoryview(bank)
+    pos = self.start
+    data_start = self.end
+    points = []
+    while pos < data_start:
+      loc, player1addr, player2addr = struct.unpack('<BHH', memview[pos:pos+5].bytes())
+      player1addr &= 0x3FFF
+      player2addr &= 0x3FFF
+      data_start = min(data_start, player1addr, player2addr)
+      pos += 5

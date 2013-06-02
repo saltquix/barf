@@ -8,8 +8,23 @@ class RiverCityRansomRom(NesRom):
   def __init__(self):
     NesRom.__init__(self)
 
+  MD5_RIVER_CITY_RANSOM = b"\x29\x4E\x4F\xA0\x92\xDB\x8E\x29\xD8\x3F\x71\xE1\x37\xD1\xF9\x9F"
+  MD5_STREET_GANGS = b"\x85\xB0\x44\x22\x03\x6F\xE1\x8C\x0E\x91\xEA\xE3\x9C\x8A\x95\xB7"
+  MD5_DOWNTOWN = b"\x36\xD2\x76\x1C\xDB\x32\x8C\xA8\x77\x77\xD4\xEE\x3B\xA0\x23\x24"
+  clean = False
+
   def load(self, path):
     NesRom.load(self, path)
+    md5 = self.md5()
+    if md5 == self.MD5_RIVER_CITY_RANSOM:
+      self.title = 'River City Ransom'
+      self.clean = True
+    elif md5 == self.MD5_STREET_GANGS:
+      self.title = 'Street Gangs'
+      self.clean = True
+    elif md5 == self.MD5_DOWNTOWN:
+      self.title = 'Downtown Nekketu Monogatari'
+      self.clean = True
     if self.checkJapaneseVersion():
       self.encoding = japanese
       self.model = {
@@ -20,7 +35,7 @@ class RiverCityRansomRom(NesRom):
         'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x236C, end=0x23A7),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C85, end=0x1D04,
           count=24, base='data_start', ptr_OR=0, ptr_bytes=1),
-        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24A9, end=0x2AAC),
+        'buyable_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24A9, end=0x2AAC),
         'location_name_codes': chunks.Bytes(bank_type='prg', bank_number=1, start=0x156B, end=0x158E),
         'reincarnation_locations': chunks.Bytes(bank_type='prg', bank_number=7, start=0x349A, end=0x34BD),
         'location_music_tracks': chunks.Bytes(bank_type='prg', bank_number=7, start=0x3094, end=0x30B7),
@@ -28,8 +43,6 @@ class RiverCityRansomRom(NesRom):
         'location_gang_probability': chunks.PointerDataBlock(chunks.TerminatedDecAsHex, bank_type='prg', bank_number=4, start=0x35F1, end=0x36A9),
         'gang_turf_title_codes': chunks.Bytes(bank_type='prg', bank_number=6, start=0x35AF, end=0x35B8)
       }
-      self.firstRealShopItem = 1
-      self.lastRealShopItem = 122
     else:
       self.encoding = english
       self.model = {
@@ -40,7 +53,8 @@ class RiverCityRansomRom(NesRom):
         'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x2351, end=0x23E2),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C0C, end=0x1DBE,
           count=24, base='data_start', ptr_OR=0),
-        'shop_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24F9, end=0x2FA3),
+        'buyable_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24F9, end=0x2FA3),
+        'shop_inventories': chunks.PointerDataBlock(chunks.TerminatedBytes, bank_type='prg', bank_number=2, start=0x23F5, end=0x24F9),
         'location_name_codes': chunks.Bytes(bank_type='prg', bank_number=1, start=0x1CBB, end=0x1CDE),
         'reincarnation_locations': chunks.Bytes(bank_type='prg', bank_number=7, start=0x349A, end=0x34BD),
         'location_music_tracks': chunks.Bytes(bank_type='prg', bank_number=7, start=0x3057, end=0x307A),
@@ -49,8 +63,6 @@ class RiverCityRansomRom(NesRom):
         'gang_turf_title_codes': chunks.Bytes(bank_type='prg', bank_number=6, start=0x35D0, end=0x35D9),
         'gang_cash': chunks.DecAsHexCouplets(bank_type='prg', bank_number=7, start=0x2C2A, end=0x2C2A + 9*2)
       }
-      self.firstRealShopItem = 1
-      self.lastRealShopItem = 124
 
   @property
   def npcNames(self):

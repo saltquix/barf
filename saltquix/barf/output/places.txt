@@ -1,0 +1,247 @@
+﻿# name_code = line numbers from >>misc_text.txt<<
+
+0.
+ name_code: 68
+ reincarnation_location: 2
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+1.
+ name_code: 64
+ reincarnation_location: 3
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+2.
+ name_code: 55
+ reincarnation_location: 4
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+3.
+ name_code: 64
+ reincarnation_location: 5
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+4.
+ name_code: 59
+ reincarnation_location: 6
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+5.
+ name_code: 64
+ reincarnation_location: 7
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+6.
+ name_code: 56
+ reincarnation_location: 8
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+7.
+ name_code: 60
+ reincarnation_location: 9
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+8.
+ name_code: 60
+ reincarnation_location: 10
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+9.
+ name_code: 65
+ reincarnation_location: 11
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+10.
+ name_code: 61
+ reincarnation_location: 12
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+11.
+ name_code: 61
+ reincarnation_location: 13
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+12.
+ name_code: 61
+ reincarnation_location: 14
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+13.
+ name_code: 62
+ reincarnation_location: 15
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+14.
+ name_code: 62
+ reincarnation_location: 16
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+15.
+ name_code: 62
+ reincarnation_location: 17
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+16.
+ name_code: 65
+ reincarnation_location: 18
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+17.
+ name_code: 57
+ reincarnation_location: 19
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+18.
+ name_code: 57
+ reincarnation_location: 20
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+19.
+ name_code: 65
+ reincarnation_location: 21
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+20.
+ name_code: 63
+ reincarnation_location: 22
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+21.
+ name_code: 63
+ reincarnation_location: 23
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+22.
+ name_code: 63
+ reincarnation_location: 24
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+23.
+ name_code: 65
+ reincarnation_location: 25
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+24.
+ name_code: 58
+ reincarnation_location: 26
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+25.
+ name_code: 58
+ reincarnation_location: 27
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+26.
+ name_code: 66
+ reincarnation_location: 28
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+27.
+ name_code: 66
+ reincarnation_location: 29
+ music_track: 5
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+28.
+ name_code: 67
+ reincarnation_location: 30
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+29.
+ name_code: (none)
+ reincarnation_location: 31
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+30.
+ name_code: (none)
+ reincarnation_location: 32
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+31.
+ name_code: (none)
+ reincarnation_location: 33
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+32.
+ name_code: (none)
+ reincarnation_location: 34
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+33.
+ name_code: (none)
+ reincarnation_location: 34
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+
+34.
+ name_code: (none)
+ reincarnation_location: 34
+ music_track: 6
+ pacifist_mode: on
+ gang_probability: 10% 10% 10% 10% 10% 10% 10% 10% 10%
+

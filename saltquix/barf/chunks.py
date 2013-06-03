@@ -347,3 +347,17 @@ class LocationBoundaryCollection(DataChunk):
     bounds = (struct.unpack('<HH', memview[pos:pos+4].tobytes()) for pos in range(self.start, self.end, 4))
     bounds = tuple((bound[0], bound[1] + 256) for bound in bounds)
     return bounds
+  def write(self, rom, values):
+    data = []
+    for minimum, maximum in values:
+      if minimum < 0:
+        raise Exception("edge boundary cannot be negative")
+      if maximum-256 > 0xFFFF:
+        raise Exception("edge boundary out of range")
+      if minimum+256 > maximum:
+        raise Exception("distance between edge boundaries must be at least 256 pixels")
+      data.append(struct.pack('<HH', minimum, maximum-256))
+    data = b''.join(data)
+    if len(data) != (self.end-self.start):
+      raise Exception('wrong number of values')
+    self.getBank(rom)[self.start:self.end] = data

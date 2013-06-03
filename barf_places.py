@@ -24,6 +24,12 @@ def parse_onoff(name, value):
     return 0
   raise Exception("invalid value for %s: %s" % (name, value))
 
+def parse_couplet(name, value):
+  m = re.match(r'^\s*(\d+)\s*,\s*(\d+)\s*$', value)
+  if not m:
+    raise Exception("invalid value for %s: %s" % (name, value))
+  return ( int(m.group(1)), int(m.group(2)) )
+
 def point_to_string(pair):
   point = dict(pair[1])
   s = 'location %d (player1: %d,%d) (player2: %d,%d) (camera: %d)' % ( \
@@ -43,6 +49,7 @@ def run():
       music_tracks = [0 for i in range(35)]
       no_probability = tuple(0 for i in range(9))
       gang_probability = [None for i in range(35)]
+      edges = list(rom.model['location_boundaries'].read(rom))
       with hackery.opentxt('places', 'r') as f:
         current_id = None
         for l in f:
@@ -69,6 +76,8 @@ def run():
             music_tracks[current_id] = parse_num(key, value, True)
           elif key == 'pacifist_mode':
             pacifist_mode[current_id] = parse_onoff(key, value)
+          elif key == 'edges':
+            edges[current_id] = parse_couplet(key, value)
           elif key == 'gang_probability':
             gp = [0 for i in range(9)]
             for i, prob in enumerate(int(m.group(1)) for m in re.finditer('(\d+)%', value)):
@@ -91,6 +100,7 @@ def run():
       rom.model['location_pacifist_mode'].write(rom, pacifist_mode)
       rom.model['reincarnation_locations'].write(rom, reincarnation)
       rom.model['location_music_tracks'].write(rom, music_tracks)
+      rom.model['location_boundaries'].write(rom, edges)
       with hackery.phase('packing gang probability data'):
         rom.model['location_gang_probability'].write(rom, gang_probability)
       hackery.finishsaveback()
@@ -143,7 +153,7 @@ def run():
           gp = gp[:9]
           f.write(' gang_probability: %s%s' % (' '.join('%d%%'%v for v in gp), os.linesep))
           if i < len(boundaries):
-            f.write(' ##edges: %d, %d%s' % (boundaries[i] + (os.linesep,)))
+            f.write(' edges: %d, %d%s' % (boundaries[i] + (os.linesep,)))
           if i < len(exit_zones):
             f.write(' ##exits:%s' % os.linesep)
             for zone in exit_zones[i]:

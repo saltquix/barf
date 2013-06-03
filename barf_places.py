@@ -149,9 +149,12 @@ def run():
               f.write(' ## [{0: >4},{1: >3},{2: >4},{3: >3}]'.format( \
                 zone['start_x'], zone['start_y'], \
                 zone['end_x'], zone['end_y']))
+              if 'direction' in zone:
+                f.write(' %s' % zone['direction'])
               if 'door' in zone:
                 f.write(' (door: %d)' % zone['door'])
-              f.write(' (flags: %x)' % zone['flags'])
+              if 'flags' in zone:
+                f.write(' (flags: %x)' % zone['flags'])
               if zone['target_type'] == 'location':
                 f.write(' -> %s' % point_to_string(entry_points[target_id]))
               else:

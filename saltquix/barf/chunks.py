@@ -311,7 +311,11 @@ class ExitZoneCollection(DataChunk):
         zonePos &= 0x3FFF
         flags, target_id, start_x, end_x, start_y, end_y = struct.unpack('<BBhhBB', memview[zonePos:zonePos+8].tobytes())
         target_type = 'shop' if flags&0x80 else 'location'
+        flags &= ~0x80
         door = struct.unpack('<H', memview[zonePos+8:zonePos+10].tobytes())[0] if flags&0x40 else None
+        flags &= ~0x40
+        direction = flags & 0x03
+        flags &= ~0x03
         locationZone = ()
         locationZone += (('target_type', target_type),)
         locationZone += (('target_id', target_id),)
@@ -319,9 +323,16 @@ class ExitZoneCollection(DataChunk):
         locationZone += (('end_x', end_x),)
         locationZone += (('start_y', start_y),)
         locationZone += (('end_y', end_y),)
-        if door:
+        if direction == 0:
+          locationZone += (('direction','up'),)
+        elif direction == 1:
+          locationZone += (('direction','left'),)
+        elif direction == 2:
+          locationZone += (('direction','right'),)
+        if door != None:
           locationZone += (('door', door),)
-        locationZone += (('flags', flags & 0x3F),)
+        if flags:
+          locationZone += (('flags', flags & 0x3F),)
         locationZones.append(locationZone)
         zonesPos += 2
       allLocationZones.append(tuple(locationZones))

@@ -271,8 +271,54 @@ class EntrancePointCollection(DataChunk):
     data_start = self.end
     points = []
     while pos < data_start:
-      loc, player1addr, player2addr = struct.unpack('<BHH', memview[pos:pos+5].bytes())
-      player1addr &= 0x3FFF
-      player2addr &= 0x3FFF
-      data_start = min(data_start, player1addr, player2addr)
+      loc, cameraPosAddr, playerPosAddr = struct.unpack('<BHH', memview[pos:pos+5].tobytes())
+      cameraPosAddr &= 0x3FFF
+      playerPosAddr &= 0x3FFF
+      cameraPos = struct.unpack('<H', memview[cameraPosAddr:cameraPosAddr+2].tobytes())[0]
+      player1_x, player2_x, elevation, player1_y, player2_y = struct.unpack('<HBBBB', memview[playerPosAddr:playerPosAddr+6].tobytes())
+      player2_x |= player1_x & 0xFF00
+      data_start = min(data_start, cameraPosAddr, playerPosAddr)
+      point = ()
+      point += (('camera_left', cameraPos),)
+      point += (('player1_left', player1_x),)
+      point += (('player1_top', player1_y),)
+      point += (('player2_left', player2_x),)
+      point += (('player2_top', player2_y),)
+      if elevation != 0:
+        point += (('elevation', elevation),)
+      points.append( (loc, point) )
       pos += 5
+    return tuple(points)
+
+class ExitZoneCollection(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None, ptr_OR=0x8000, count=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index)
+  def read(self, rom):
+    bank = self.getBank(rom)
+    memview = memoryview(bank)
+    pos = self.start
+    data_start = self.end
+    allLocationZones = []
+    while pos < data_start:
+      zonesPos = struct.unpack('<H', memview[pos:pos+2].tobytes())[0]
+      zonesPos &= 0x3FFF
+      data_start = min(data_start, zonesPos)
+      locationZones = []
+      while True:
+        zonePos = struct.unpack('<H', memview[zonesPos:zonesPos+2].tobytes())[0]
+        if zonePos == 0:
+          break
+        zonePos &= 0x3FFF
+        flags, target, start_x, end_x, start_y, end_y = struct.unpack('<BBhhBB', memview[zonePos:zonePos+8].tobytes())
+        target_type = 'shop' if flags&0x80 else 'location'
+        locationZones.append(( \
+          ('target_type', target_type),
+          ('target_id',target), \
+          ('start_x',start_x), \
+          ('end_x',end_x), \
+          ('start_y',start_y), \
+          ('end_y',end_y)))
+        zonesPos += 2
+      allLocationZones.append(tuple(locationZones))
+      pos += 2
+    return tuple(allLocationZones)

@@ -86,14 +86,16 @@ def run():
         rom.model['location_gang_probability'].write(rom, gang_probability)
       hackery.finishsaveback()
     else:
+      name_codes = rom.model['location_name_codes'].read(rom)
+      reincarnation = rom.model['reincarnation_locations'].read(rom)
+      music_tracks = rom.model['location_music_tracks'].read(rom)
+      pacifist_mode = rom.model['location_pacifist_mode'].read(rom)
+      gang_probability = rom.model['location_gang_probability'].read(rom)
+      entry_points = rom.model['location_entry_points'].read(rom)
+      exit_zones = rom.model['location_exit_zones'].read(rom)
       with hackery.opentxt('places', 'w') as f:
         f.write('# name_code = line numbers from >>misc_text.txt<<%s' % os.linesep)
         f.write(os.linesep)
-        name_codes = rom.model['location_name_codes'].read(rom)
-        reincarnation = rom.model['reincarnation_locations'].read(rom)
-        music_tracks = rom.model['location_music_tracks'].read(rom)
-        pacifist_mode = rom.model['location_pacifist_mode'].read(rom)
-        gang_probability = rom.model['location_gang_probability'].read(rom)
         for i in range(len(name_codes)):
           f.write('%d.%s' % (i, os.linesep))
           if i < len(name_codes):
@@ -111,6 +113,24 @@ def run():
           gp += tuple(0 for i in range(9 - len(gp)))
           gp = gp[:9]
           f.write(' gang_probability: %s%s' % (' '.join('%d%%'%v for v in gp), os.linesep))
+          my_entry_points = (dict(e[1]) for e in entry_points if e[0] == i)
+          for point in my_entry_points:
+            f.write(' # entry point: (player1: {0},{1}) (player2: {2},{3}) (camera: {4})'.format( \
+              point['player1_left'], point['player1_top'], point['player2_left'], point['player2_top'], point['camera_left']))
+            if 'elevation' in point:
+              f.write(' (elevation: {0})'.format(point['elevation']))
+            f.write(os.linesep)
+          if i < len(exit_zones):
+            for zone in exit_zones[i]:
+              zone = dict(zone)
+              zone_id = zone['target_id']
+              if zone['target_type'] == 'location':
+                zone_id = entry_points[zone_id][0]
+              f.write(' # exit zone: [%d,%d,%d,%d] -> %s %d' % ( \
+                zone['start_x'], zone['start_y'], \
+                zone['end_x'], zone['end_y'], \
+                zone['target_type'], zone_id))
+              f.write(os.linesep)
           f.write(os.linesep)
       hackery.finishexport()
 

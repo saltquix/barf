@@ -61,7 +61,9 @@ class RiverCityRansomRom(NesRom):
         'location_pacifist_mode': chunks.Bytes(bank_type='prg', bank_number=7, start=0x10CC, end=0x10EF),
         'location_gang_probability': chunks.PointerDataBlock(chunks.TerminatedDecAsHex, bank_type='prg', bank_number=4, start=0x35F1, end=0x36A9),
         'gang_turf_title_codes': chunks.Bytes(bank_type='prg', bank_number=6, start=0x35D0, end=0x35D9),
-        'gang_cash': chunks.DecAsHexCouplets(bank_type='prg', bank_number=7, start=0x2C2A, end=0x2C2A + 9*2)
+        'gang_cash': chunks.DecAsHexCouplets(bank_type='prg', bank_number=7, start=0x2C2A, end=0x2C2A + 9*2),
+        'location_entry_points': chunks.EntrancePointCollection(bank_type='prg', bank_number=1, start=0x243D, end=0x2748),
+        'location_exit_zones': chunks.ExitZoneCollection(bank_type='prg', bank_number=1, start=0x2748, end=0x2C39)
       }
 
   @property

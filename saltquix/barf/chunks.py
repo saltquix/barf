@@ -275,7 +275,7 @@ class EntrancePointCollection(DataChunk):
       cameraPosAddr &= 0x3FFF
       playerPosAddr &= 0x3FFF
       cameraPos = struct.unpack('<H', memview[cameraPosAddr:cameraPosAddr+2].tobytes())[0]
-      player1_x, player2_x, elevation, player1_y, player2_y = struct.unpack('<HBBBB', memview[playerPosAddr:playerPosAddr+6].tobytes())
+      player1_x, player1_y, elevation, player2_x, player2_y = struct.unpack('<HBBBB', memview[playerPosAddr:playerPosAddr+6].tobytes())
       player2_x |= player1_x & 0xFF00
       data_start = min(data_start, cameraPosAddr, playerPosAddr)
       point = ()
@@ -309,15 +309,20 @@ class ExitZoneCollection(DataChunk):
         if zonePos == 0:
           break
         zonePos &= 0x3FFF
-        flags, target, start_x, end_x, start_y, end_y = struct.unpack('<BBhhBB', memview[zonePos:zonePos+8].tobytes())
+        flags, target_id, start_x, end_x, start_y, end_y = struct.unpack('<BBhhBB', memview[zonePos:zonePos+8].tobytes())
         target_type = 'shop' if flags&0x80 else 'location'
-        locationZones.append(( \
-          ('target_type', target_type),
-          ('target_id',target), \
-          ('start_x',start_x), \
-          ('end_x',end_x), \
-          ('start_y',start_y), \
-          ('end_y',end_y)))
+        door = struct.unpack('<H', memview[zonePos+8:zonePos+10].tobytes())[0] if flags&0x40 else None
+        locationZone = ()
+        locationZone += (('target_type', target_type),)
+        locationZone += (('target_id', target_id),)
+        locationZone += (('start_x', start_x),)
+        locationZone += (('end_x', end_x),)
+        locationZone += (('start_y', start_y),)
+        locationZone += (('end_y', end_y),)
+        if door:
+          locationZone += (('door', door),)
+        locationZone += (('flags', flags & 0x3F),)
+        locationZones.append(locationZone)
         zonesPos += 2
       allLocationZones.append(tuple(locationZones))
       pos += 2

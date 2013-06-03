@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, codecs, os, platform, ConfigParser, re
+import sys, codecs, os, platform, ConfigParser, re, itertools
 from saltquix import barf
 from saltquix.barf import Hackery
 from saltquix.barf.RiverCityRansomRom import RiverCityRansomRom
@@ -23,6 +23,15 @@ def parse_onoff(name, value):
   if re.match('^\s*off\s*$', value):
     return 0
   raise Exception("invalid value for %s: %s" % (name, value))
+
+def point_to_string(pair):
+  point = dict(pair[1])
+  s = 'location %d (player1: %d,%d) (player2: %d,%d) (camera: %d)' % ( \
+      pair[0], \
+      point['player1_left'], point['player1_top'], point['player2_left'], point['player2_top'], point['camera_left'])
+  if 'elevation' in point:
+    s += ' (elevation: {0})'.format(point['elevation'])
+  return s
 
 def run():
   with Hackery(places="places.txt") as hackery:
@@ -92,9 +101,12 @@ def run():
       pacifist_mode = rom.model['location_pacifist_mode'].read(rom)
       gang_probability = rom.model['location_gang_probability'].read(rom)
       entry_points = rom.model['location_entry_points'].read(rom)
+      entry_point_locs = (p[0] for p in entry_points)
       exit_zones = rom.model['location_exit_zones'].read(rom)
       with hackery.opentxt('places', 'w') as f:
         f.write('# name_code = line numbers from >>misc_text.txt<<%s' % os.linesep)
+        f.write(os.linesep)
+        f.write('##game_start: %s%s' % (point_to_string(entry_points[0]), os.linesep))
         f.write(os.linesep)
         for i in range(len(name_codes)):
           f.write('%d.%s' % (i, os.linesep))
@@ -105,6 +117,22 @@ def run():
               f.write(' name_code: %s%s' % (name_codes[i], os.linesep))
           if i < len(reincarnation):
             f.write(' reincarnation_location: %d%s' % (reincarnation[i], os.linesep))
+            target_point_id = reincarnation[i]
+            if target_point_id == 0:
+              f.write(' ##reincarnation_point: game_start%s' % os.linesep)
+            else:
+              target_point = entry_points[target_point_id]
+              from_loc = None
+              to_loc = target_point[0]
+              for loc, zones in enumerate(exit_zones):
+                zones = (dict(zone) for zone in zones)
+                if sum(1 for z in zones if z['target_type'] == 'location' and z['target_id'] == to_loc) == 1:
+                  from_loc = loc
+                  break
+              if from_loc != None:
+                f.write(' ##reincarnation_point: [location %d -> location %d]%s' % (from_loc, to_loc, os.linesep))
+              else:
+                f.write(' ##reincarnation_point: %s%s' % (point_to_string(target_point), os.linesep))
           if i < len(music_tracks):
             f.write(' music_track: %d%s' % (music_tracks[i], os.linesep))
           if i < len(pacifist_mode):
@@ -113,23 +141,21 @@ def run():
           gp += tuple(0 for i in range(9 - len(gp)))
           gp = gp[:9]
           f.write(' gang_probability: %s%s' % (' '.join('%d%%'%v for v in gp), os.linesep))
-          my_entry_points = (dict(e[1]) for e in entry_points if e[0] == i)
-          for point in my_entry_points:
-            f.write(' # entry point: (player1: {0},{1}) (player2: {2},{3}) (camera: {4})'.format( \
-              point['player1_left'], point['player1_top'], point['player2_left'], point['player2_top'], point['camera_left']))
-            if 'elevation' in point:
-              f.write(' (elevation: {0})'.format(point['elevation']))
-            f.write(os.linesep)
           if i < len(exit_zones):
+            f.write(' ##exits:%s' % os.linesep)
             for zone in exit_zones[i]:
               zone = dict(zone)
-              zone_id = zone['target_id']
-              if zone['target_type'] == 'location':
-                zone_id = entry_points[zone_id][0]
-              f.write(' # exit zone: [%d,%d,%d,%d] -> %s %d' % ( \
+              target_id = zone['target_id']
+              f.write(' ## [%d,%d,%d,%d]' % ( \
                 zone['start_x'], zone['start_y'], \
-                zone['end_x'], zone['end_y'], \
-                zone['target_type'], zone_id))
+                zone['end_x'], zone['end_y']))
+              if 'door' in zone:
+                f.write(' (door: %d)' % zone['door'])
+              f.write(' (flags: %x)' % zone['flags'])
+              if zone['target_type'] == 'location':
+                f.write(' -> %s' % point_to_string(entry_points[target_id]))
+              else:
+                f.write(' -> %s %d' % (zone['target_type'], target_id))
               f.write(os.linesep)
           f.write(os.linesep)
       hackery.finishexport()

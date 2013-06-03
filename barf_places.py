@@ -106,7 +106,7 @@ def run():
       with hackery.opentxt('places', 'w') as f:
         f.write('# name_code = line numbers from >>misc_text.txt<<%s' % os.linesep)
         f.write(os.linesep)
-        f.write('##game_start: %s%s' % (point_to_string(entry_points[0]), os.linesep))
+        f.write('##start_point: %s%s' % (point_to_string(entry_points[0]), os.linesep))
         f.write(os.linesep)
         for i in range(len(name_codes)):
           f.write('%d.%s' % (i, os.linesep))
@@ -119,7 +119,7 @@ def run():
             f.write(' reincarnation_location: %d%s' % (reincarnation[i], os.linesep))
             target_point_id = reincarnation[i]
             if target_point_id == 0:
-              f.write(' ##reincarnation_point: game_start%s' % os.linesep)
+              f.write(' ##reincarnation_point: start_point%s' % os.linesep)
             else:
               target_point = entry_points[target_point_id]
               from_loc = None
@@ -146,7 +146,7 @@ def run():
             for zone in exit_zones[i]:
               zone = dict(zone)
               target_id = zone['target_id']
-              f.write(' ## [%d,%d,%d,%d]' % ( \
+              f.write(' ## [{0: >4},{1: >3},{2: >4},{3: >3}]'.format( \
                 zone['start_x'], zone['start_y'], \
                 zone['end_x'], zone['end_y']))
               if 'door' in zone:

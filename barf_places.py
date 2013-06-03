@@ -103,6 +103,7 @@ def run():
       entry_points = rom.model['location_entry_points'].read(rom)
       entry_point_locs = (p[0] for p in entry_points)
       exit_zones = rom.model['location_exit_zones'].read(rom)
+      boundaries = rom.model['location_boundaries'].read(rom)
       with hackery.opentxt('places', 'w') as f:
         f.write('# name_code = line numbers from >>misc_text.txt<<%s' % os.linesep)
         f.write(os.linesep)
@@ -141,6 +142,8 @@ def run():
           gp += tuple(0 for i in range(9 - len(gp)))
           gp = gp[:9]
           f.write(' gang_probability: %s%s' % (' '.join('%d%%'%v for v in gp), os.linesep))
+          if i < len(boundaries):
+            f.write(' ##edges: %d, %d%s' % (boundaries[i] + (os.linesep,)))
           if i < len(exit_zones):
             f.write(' ##exits:%s' % os.linesep)
             for zone in exit_zones[i]:

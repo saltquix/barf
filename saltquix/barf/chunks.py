@@ -338,3 +338,12 @@ class ExitZoneCollection(DataChunk):
       allLocationZones.append(tuple(locationZones))
       pos += 2
     return tuple(allLocationZones)
+
+class LocationBoundaryCollection(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None, ptr_OR=0x8000, count=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index)
+  def read(self, rom):
+    memview = memoryview(self.getBank(rom))
+    bounds = (struct.unpack('<HH', memview[pos:pos+4].tobytes()) for pos in range(self.start, self.end, 4))
+    bounds = tuple((bound[0], bound[1] + 256) for bound in bounds)
+    return bounds

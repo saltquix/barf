@@ -1,5 +1,7 @@
 import struct
 from pprint import pprint
+import itertools
+from collections import namedtuple
 
 # RCR likes to store decimal numbers as hexadecimal sometimes (e.g. 0x36 means decimal 36)
 def hex2dec(h):
@@ -361,3 +363,45 @@ class LocationBoundaryCollection(DataChunk):
     if len(data) != (self.end-self.start):
       raise Exception('wrong number of values')
     self.getBank(rom)[self.start:self.end] = data
+
+class SpriteCollection(DataChunk):
+  def read(self, rom):
+    memview = memoryview(self.getBank(rom))
+    spriteSets = []
+    data_start = self.end
+    for pos in range(self.start, self.end, 2):
+      if pos >= data_start:
+        break
+      addr = struct.unpack('<H', memview[pos:pos+2].tobytes())[0]
+      if addr == 0:
+        spriteSets.append(None)
+        continue
+      addr &= 0x3FFF
+      data_start = min(data_start, addr)
+      spriteSets.append(addr)
+    last_set_start = max(spriteSets)
+    data_start = self.end
+    inlineSprites = set()
+    spriteSets2 = []
+    for i, set_addr in enumerate(spriteSets):
+      set_end = min(itertools.chain( \
+        (other_addr for other_addr in spriteSets if other_addr > set_addr), \
+        (other_addr for other_addr in inlineSprites if other_addr > set_addr), \
+        (data_start,)  ))
+      sprites = []
+      for pos in range(set_addr, set_end, 2):
+        if pos >= set_end:
+          break
+        addr = struct.unpack('<H', memview[pos:pos+2].tobytes())[0]
+        if addr == 0:
+          sprites.append(None)
+        else:
+          addr &= 0x3FFF
+          if addr < last_set_start:
+            inlineSprites.add(addr)
+          else:
+            data_start = min(addr, data_start)
+          set_end = min(set_end, addr)
+          sprites.append(addr)
+      spriteSets2.append(sprites)
+    return spriteSets2

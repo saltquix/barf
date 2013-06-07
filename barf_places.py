@@ -30,11 +30,21 @@ def parse_couplet(name, value):
     raise Exception("invalid value for %s: %s" % (name, value))
   return ( int(m.group(1)), int(m.group(2)) )
 
-def point_to_string(pair):
+def point_to_string(pair, bounds):
+  edges = bounds[pair[0]]
   point = dict(pair[1])
-  s = 'location %d (player1: %d,%d) (player2: %d,%d) (camera: %d)' % ( \
+  camera = point['camera_left']
+  p1left = point['player1_left']
+  p2left = point['player2_left']
+  s = 'location %d (p1: %d,%d) (p2: %d,%d)' % ( \
       pair[0], \
-      point['player1_left'], point['player1_top'], point['player2_left'], point['player2_top'], point['camera_left'])
+      p1left, point['player1_top'], p2left, point['player2_top'])
+  camera = max(edges[0], min(edges[1] - 256, camera))
+  guess_camera = (p1left+p2left)/2 - 128
+  guess_camera -= guess_camera % 8
+  guess_camera = max(edges[0], min(edges[1] - 256, guess_camera))
+  if camera != guess_camera:
+    s += ' (view: %d)' % (camera + 128)
   if 'elevation' in point:
     s += ' (elevation: {0})'.format(point['elevation'])
   return s
@@ -117,7 +127,7 @@ def run():
       with hackery.opentxt('places', 'w') as f:
         f.write('# name_code = line numbers from >>misc_text.txt<<%s' % os.linesep)
         f.write(os.linesep)
-        f.write('##start_point: %s%s' % (point_to_string(entry_points[0]), os.linesep))
+        f.write('##start_point: %s%s' % (point_to_string(entry_points[0], boundaries), os.linesep))
         f.write(os.linesep)
         for i in range(len(name_codes)):
           f.write('%d.%s' % (i, os.linesep))
@@ -143,7 +153,7 @@ def run():
               if from_loc != None:
                 f.write(' ##reincarnation_point: [location %d -> location %d]%s' % (from_loc, to_loc, os.linesep))
               else:
-                f.write(' ##reincarnation_point: %s%s' % (point_to_string(target_point), os.linesep))
+                f.write(' ##reincarnation_point: %s%s' % (point_to_string(target_point, boundaries), os.linesep))
           if i < len(music_tracks):
             f.write(' music_track: %d%s' % (music_tracks[i], os.linesep))
           if i < len(pacifist_mode):
@@ -162,14 +172,16 @@ def run():
               f.write(' ## [{0: >4},{1: >3},{2: >4},{3: >3}]'.format( \
                 zone['start_x'], zone['start_y'], \
                 zone['end_x'], zone['end_y']))
-              if 'direction' in zone:
-                f.write(' %s' % zone['direction'])
               if 'door' in zone:
                 f.write(' (door: %d)' % zone['door'])
+              if 'direction' in zone:
+                f.write(' (direction: %s)' % zone['direction'])
+              if zone['locked']:
+                f.write(' (locked)')
               if 'flags' in zone:
-                f.write(' (flags: %x)' % zone['flags'])
+                f.write(' (flags: %02X)' % zone['flags'])
               if zone['target_type'] == 'location':
-                f.write(' -> %s' % point_to_string(entry_points[target_id]))
+                f.write(' -> %s' % point_to_string(entry_points[target_id], boundaries))
               else:
                 f.write(' -> %s %d' % (zone['target_type'], target_id))
               f.write(os.linesep)

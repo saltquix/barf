@@ -53,7 +53,8 @@ class RiverCityRansomRom(NesRom):
         'npc_dialog': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=1, start=0x20, end=0x1C00),
         'misc_text': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=3, start=0x3200, end=0x3E00),
         'shop_dialog': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1F46, end=0x21D2),
-        'shop_submenus': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x2351, end=0x23E2),
+        'shop_submenu_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x2351, end=0x23E2),
+        'shop_submenu_codes': chunks.Bytes(bank_type='prg', bank_number=2, start=0x2339, end=0x2351),
         'shop_names': chunks.PointerDataBlock(chunks.TerminatedString, bank_type='prg', bank_number=2, start=0x1C0C, end=0x1DBE,
           count=24, base='data_start', ptr_OR=0),
         'buyable_items': chunks.PointerDataBlock(chunks.ShopItem, bank_type='prg', bank_number=2, start=0x24F9, end=0x2FA3),
@@ -68,7 +69,8 @@ class RiverCityRansomRom(NesRom):
         'location_entry_points': chunks.EntrancePointCollection(bank_type='prg', bank_number=1, start=0x243D, end=0x2748),
         'location_exit_zones': chunks.ExitZoneCollection(bank_type='prg', bank_number=1, start=0x2748, end=0x2C39),
         'location_boundaries': chunks.LocationBoundaryCollection(bank_type='prg', bank_number=0, start=0x39EC, end=0x3A78),
-        'sprites': chunks.SpriteCollection(bank_type='prg', bank_number=3, start=0x0000, end=0x3200)
+        'sprites': chunks.SpriteCollection(bank_type='prg', bank_number=3, start=0x0000, end=0x3200),
+        'palettes': chunks.PointerDataBlock(chunks.Palette, bank_type='prg', bank_number=7, start=0x26F1, end=0x2B9D)
       }
 
   @property

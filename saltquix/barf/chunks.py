@@ -27,6 +27,12 @@ class Bytes(DataChunk):
   def write(self, rom, values):
     self.getBank(rom)[self.start:self.end] = values
 
+class Palette(DataChunk):
+  def read(self, rom):
+    return tuple(self.getBank(rom)[self.start:self.start+16])
+  def encode(self, rom, values):
+    return bytearray(values)
+
 class TerminatedBytes(DataChunk):
   def __init__(self, bank_type, bank_number, start, terminator=0xFF, index=None):
     DataChunk.__init__(self, bank_type, bank_number, start, index=index)
@@ -223,6 +229,7 @@ class PointerDataBlock(DataChunk):
     while len(values)>0 and values[-1] == None:
       values = values[:-1]
     encoded = [(b'' if value == None else self.temp(index=i).encode(rom, value)) for i, value in enumerate(values)]
+    print(encoded)
     ptrs = bytearray(len(values) * self.ptr_bytes)
     data = bytearray()
     entries = {}
@@ -318,6 +325,8 @@ class ExitZoneCollection(DataChunk):
         flags &= ~0x40
         direction = flags & 0x03
         flags &= ~0x03
+        locked = (flags & 0x04) == 0x04
+        flags &= ~0x04
         locationZone = ()
         locationZone += (('target_type', target_type),)
         locationZone += (('target_id', target_id),)
@@ -325,6 +334,7 @@ class ExitZoneCollection(DataChunk):
         locationZone += (('end_x', end_x),)
         locationZone += (('start_y', start_y),)
         locationZone += (('end_y', end_y),)
+        locationZone += (('locked', locked),)
         if direction == 0:
           locationZone += (('direction','up'),)
         elif direction == 1:
@@ -364,6 +374,8 @@ class LocationBoundaryCollection(DataChunk):
       raise Exception('wrong number of values')
     self.getBank(rom)[self.start:self.end] = data
 
+Sprite = namedtuple('Sprite', ['flags', 'tiles'])
+
 class SpriteCollection(DataChunk):
   def read(self, rom):
     memview = memoryview(self.getBank(rom))
@@ -402,6 +414,7 @@ class SpriteCollection(DataChunk):
           else:
             data_start = min(addr, data_start)
           set_end = min(set_end, addr)
-          sprites.append(addr)
+          spr = Sprite(*struct.unpack('BB', memview[addr:addr+2].tobytes()))
+          sprites.append(spr)
       spriteSets2.append(sprites)
     return spriteSets2

@@ -19,6 +19,19 @@ class DataChunk:
   def getBank(self, rom):
     return rom.getBank(self.bank_type, self.bank_number)
 
+Stats = namedtuple('Stats', ['punch', 'kick', 'weapon', 'throw', 'agility', 'defence', 'strength', 'willpower', 'stamina'])
+
+class StatsBlock(DataChunk):
+  def __init__(self, bank_type, bank_number, start, end, index=None):
+    DataChunk.__init__(self, bank_type, bank_number, start, end, index=index)
+  def read(self, rom):
+    memview = memoryview(self.getBank(rom))
+    return tuple(Stats(*struct.unpack('BBBBBBBBB', memview[pos:pos+9].tobytes())) for pos in range(self.start, self.end, 9))
+  def write(self, rom, statSets):
+    bank = self.getBank(rom)
+    for i, statSet in enumerate(statSets):
+      bank[self.start + (i*9):self.start + ((i+1)*9)] = statSet
+
 class Bytes(DataChunk):
   def __init__(self, bank_type, bank_number, start, end, index=None):
     DataChunk.__init__(self, bank_type, bank_number, start, end, index=index)
